@@ -1,21 +1,6 @@
-# umall-management
+# umall_management
+vue实战项目：umall后台管理系统（ujiuye）
 
-> A Vue.js project
+该项目是umall_mobile项目（移动App）的后台管理系统，采用Vue开发，并使用vuex集中式存储管理所有组件的状态，使用的UI框架是Element-UI。
 
-## Build Setup
-
-``` bash
-# install dependencies
-npm install
-
-# serve with hot reload at localhost:8080
-npm run dev
-
-# build for production with minification
-npm run build
-
-# build for production and view the bundle analyzer report
-npm run build --report
-```
-
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+完成情况：会员管理、轮播图管理、秒杀活动、正则验证未完成，其他均已完成。
