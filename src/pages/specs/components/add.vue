@@ -116,13 +116,11 @@ export default {
         warningAlert("规格名称不能为空！");
         return false; //用于判断两个验证是否都通过，只要有一个不通过就返回false
       }
-
       //验证每个属性值都不能为空
       if (this.attrList.some((item) => item.value == "")) {
         warningAlert("所有的属性值都必填！");
         return false;
       }
-
       return true;
     },
     //点击确定

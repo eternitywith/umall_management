@@ -22,7 +22,8 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 import { userLoginReq } from "../../../src/utils/request";
-import { successAlert, warningAlert } from '../../utils/alert';
+import { successAlert, warningAlert } from "../../utils/alert";
+import {regUsername,regPassword} from "../../utils/rej"
 export default {
   data() {
     return {
@@ -37,20 +38,44 @@ export default {
   },
   methods: {
     ...mapActions({
-      changeUserInfoAction:"changeUserInfoAction"
+      changeUserInfoAction: "changeUserInfoAction",
     }),
+    //登录验证
+    loginVerify() {
+      //账号
+      if (this.form.username == "") {
+        warningAlert("请输入账号！");
+        return false;
+      }
+      if(!regUsername.test(this.form.username)){
+        warningAlert("用户名字母开头，长度5-16，允许字母数字下划线！")
+        return false;
+      }
+      //密码
+      if (this.form.password == "") {
+        warningAlert("请输入密码！");
+        return false;
+      }
+      if(!regPassword.test(this.form.password)){
+        warningAlert("密码以字母开头，长度6~18，只能包含字母、数字、下划线！")
+        return false;
+      }
+      return true;
+    },
     login() {
-      userLoginReq(this.form).then((res)=>{
-        if(res.data.code==200){
-          successAlert("登录成功！");
-          //将登录信息存储到仓库和本地存储
-          console.log(res);
-          this.changeUserInfoAction(res.data.list);
-          this.$router.push("/");
-        }else{
-          warningAlert(res.data.msg)
-        }
-      })
+      if (this.loginVerify()) {
+        userLoginReq(this.form).then((res) => {
+          if (res.data.code == 200) {
+            successAlert("登录成功！");
+            //将登录信息存储到仓库和本地存储
+            console.log(res);
+            this.changeUserInfoAction(res.data.list);
+            this.$router.push("/");
+          } else {
+            warningAlert(res.data.msg);
+          }
+        });
+      }
     },
   },
   mounted() {},

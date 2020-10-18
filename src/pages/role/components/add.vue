@@ -78,22 +78,41 @@ export default {
       };
       this.$refs.tree.setCheckedKeys([]);
     },
+    //添加验证
+    addVerify() {
+      if (!this.form.rolename) {
+        warningAlert("请输入角色名称！");
+        return false;
+      }
+      console.log(typeof(this.form.menus));
+      if (this.form.menus =="[]") {
+        warningAlert("请选择角色权限！");
+        return false;
+      }
+      if (!this.form.status) {
+        warningAlert("请选择商品分类状态！");
+        return false;
+      }
+      return true;
+    },
     //确定添加
     sure() {
-      //树形控件取值
+       //树形控件取值
       this.form.menus = JSON.stringify(this.$refs.tree.getCheckedKeys());
-      roleAddReq(this.form).then((res) => {
-        if (res.data.code == 200) {
-          successAlert(res.data.msg);
-          //表单消失
-          this.info.isShow = false;
-          //表单置空
-          this.empty();
-          this.reqRoleListAction();
-        } else {
-          warningAlert(res.data.msg);
-        }
-      });
+      if (this.addVerify()) {
+        roleAddReq(this.form).then((res) => {
+          if (res.data.code == 200) {
+            successAlert(res.data.msg);
+            //表单消失
+            this.info.isShow = false;
+            //表单置空
+            this.empty();
+            this.reqRoleListAction();
+          } else {
+            warningAlert(res.data.msg);
+          }
+        });
+      }
     },
     // 取消添加
     cancel() {
@@ -120,17 +139,20 @@ export default {
       });
     },
     update() {
-      this.form.menus = JSON.stringify(this.$refs.tree.getCheckedKeys());
-      roleEditReq(this.form).then((res) => {
-        if (res.data.code == 200) {
-          successAlert(res.data.msg);
-          this.empty();
-          this.info.isShow = false;
-          this.reqRoleListAction();
-        } else {
-          warningAlert(res.data.msg);
-        }
-      });
+        this.form.menus = JSON.stringify(this.$refs.tree.getCheckedKeys());
+      if (this.addVerify()) {
+      
+        roleEditReq(this.form).then((res) => {
+          if (res.data.code == 200) {
+            successAlert(res.data.msg);
+            this.empty();
+            this.info.isShow = false;
+            this.reqRoleListAction();
+          } else {
+            warningAlert(res.data.msg);
+          }
+        });
+      }
     },
   },
   mounted() {

@@ -7,18 +7,18 @@
 </template>
 <script>
 import { mapActions, mapGetters } from "vuex";
-import vAdd from "./components/add"
-import vList from "./components/list"
+import vAdd from "./components/add";
+import vList from "./components/list";
 export default {
   components: {
     vAdd,
-    vList
+    vList,
   },
   data() {
     return {
       info: {
         isShow: false,
-        isAdd:true
+        isAdd: true,
       },
     };
   },
@@ -28,21 +28,21 @@ export default {
   methods: {
     ...mapActions({}),
     //点击添加，表单出现
-     add(){
+    add() {
       this.info.isShow = true;
       this.info.isAdd = true;
     },
-    edit(id){
-      this.info.isShow = true;
+    edit(id) {
+      // this.info.isShow = true;
       this.info.isAdd = false;
-      this.$refs.add.look(id)
-    }
+      this.$refs.add.look(id);
+    },
   },
   mounted() {},
 };
 </script>
 <style scoped>
-.addBtn{
+.addBtn {
   margin: 10px 0;
 }
 </style>

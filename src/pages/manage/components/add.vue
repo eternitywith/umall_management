@@ -7,10 +7,7 @@
     >
       <el-form ref="form" :model="form" label-width="80px">
         <el-form-item label="所属角色">
-          <el-select
-            v-model="form.roleid"
-            placeholder="请选择所属角色"
-          >
+          <el-select v-model="form.roleid" placeholder="请选择所属角色">
             <el-option label="请选择" value="" disabled></el-option>
             <el-option
               v-for="item in list"
@@ -29,10 +26,7 @@
         </el-form-item>
 
         <el-form-item label="密码">
-          <el-input
-            v-model="form.password"
-            placeholder="请输入密码"
-          ></el-input>
+          <el-input v-model="form.password" placeholder="请输入密码"></el-input>
         </el-form-item>
 
         <el-form-item label="状态">
@@ -65,8 +59,8 @@ export default {
     return {
       //初始化表单数据
       form: {
-        roleid:'',
-        username: '',
+        roleid: "",
+        username: "",
         password: "",
         status: 1,
       },
@@ -89,14 +83,14 @@ export default {
   methods: {
     ...mapActions({
       reqListAction: "manage/reqListAction",
-      reqRoleAction:"role/reqListAction",
-      reqTotalAction:"manage/reqTotalAction"
+      reqRoleAction: "role/reqListAction",
+      reqTotalAction: "manage/reqTotalAction",
     }),
     //重置数据
     empty() {
       this.form = {
-         roleid: '',
-        username: '',
+        roleid: "",
+        username: "",
         password: "",
         status: 1,
       };
@@ -112,33 +106,54 @@ export default {
       //表单消失
       this.info.isShow = false;
     },
+    //添加验证
+    addVerify() {
+      if (!this.form.roleid) {
+        warningAlert("请选择所属角色！");
+        return false;
+      }
+      if (!this.form.username) {
+        warningAlert("请输入管理员名称！");
+        return false;
+      }
+      if (!this.form.password) {
+        warningAlert("请输入管理员密码！");
+        return false;
+      }
+      if (!this.form.status) {
+        warningAlert("请选择管理员状态！");
+        return false;
+      }
+      return true;
+    },
     //点击确定
     sure() {
-      //发起请求
-      userAddReq(this.form).then((res) => {
-        if (res.data.code == 200) {
-          //成功弹窗
-          successAlert(res.data.msg);
-          //数据重置
-          this.empty();
-          //表单消失
-          this.info.isShow = false;
-          //列表数据要刷新
-          this.reqTotalAction();
-          this.reqListAction();
-        } else {
-          warningAlert(res.data.msg);
-        }
-      });
+      if (this.addVerify()) {
+        //发起请求
+        userAddReq(this.form).then((res) => {
+          if (res.data.code == 200) {
+            //成功弹窗
+            successAlert(res.data.msg);
+            //数据重置
+            this.empty();
+            //表单消失
+            this.info.isShow = false;
+            //列表数据要刷新
+            this.reqTotalAction();
+            this.reqListAction();
+          } else {
+            warningAlert(res.data.msg);
+          }
+        });
+      }
     },
     //点击编辑时出现的表单,根据id请求数据
     look(id) {
-       
       userInfoReq(id).then((res) => {
         if (res.data.code == 200) {
           this.form = res.data.list;
           //密码置空不显示
-         this.form.password='';
+          this.form.password = "";
         } else {
           warningAlert(res.data.msg);
         }
@@ -146,25 +161,27 @@ export default {
     },
     //点击修改,与确定添加的步骤相同
     update() {
-      userUpdateReq(this.form).then((res) => {
-        if (res.data.code == 200) {
-          successAlert(res.data.msg);
-          this.empty();
-          this.info.isShow = false;
-          //重新请求数据
-          this.reqTotalAction();
-          this.reqListAction();
-        } else {
-          warningAlert(res.data.msg);
-        }
-      });
+      if (this.addVerify()) {
+        userUpdateReq(this.form).then((res) => {
+          if (res.data.code == 200) {
+            successAlert(res.data.msg);
+            this.empty();
+            this.info.isShow = false;
+            //重新请求数据
+            this.reqTotalAction();
+            this.reqListAction();
+          } else {
+            warningAlert(res.data.msg);
+          }
+        });
+      }
     },
   },
   mounted() {
-      //如果没有请求过角色管理的数据，就请求一次，如果请求过，就不用请求了
-      if(this.list.length==0){
-          this.reqRoleAction();
-      }
+    //如果没有请求过角色管理的数据，就请求一次，如果请求过，就不用请求了
+    if (this.list.length == 0) {
+      this.reqRoleAction();
+    }
   },
 };
 </script>

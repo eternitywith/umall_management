@@ -1,32 +1,19 @@
 <template>
   <div>
     <el-dialog
-      :title="info.isAdd ? '商品分类添加' : '商品分类编辑'"
+      :title="info.isAdd ? '轮播图添加' : '轮播图编辑'"
       :visible.sync="info.isShow"
       @close="close()"
     >
       <el-form ref="form" :model="form" label-width="80px">
-        <el-form-item label="上级分类">
-          <el-select v-model="form.pid" placeholder="请选择上级分类">
-            <el-option :value="0" label="顶级分类"></el-option>
-            <el-option
-              v-for="item in cateList"
-              :key="item.id"
-              :label="item.catename"
-              :value="item.id"
-            >
-            </el-option>
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="分类名称">
+        <el-form-item label="标题">
           <el-input
-            v-model="form.catename"
-            placeholder="请输入分类名称"
+            v-model="form.title"
+            placeholder="请输入标题"
           ></el-input>
         </el-form-item>
 
-        <el-form-item v-if="form.pid != 0" class="upload" label="图片">
+        <el-form-item class="upload" label="图片">
           <el-upload
             class="avatar-uploader"
             action="#"
@@ -58,7 +45,7 @@
 </template>
 <script>
 import { mapActions, mapGetters } from "vuex";
-import { cateAddReq, cateInfoReq, cateEditReq } from "../../../utils/request";
+import { bannerAddReq, bannerInfoReq, bannerEditReq } from "../../../utils/request";
 import { warningAlert, successAlert } from "../../../utils/alert";
 export default {
   props: ["info"],
@@ -67,8 +54,7 @@ export default {
       //图片路径
       imageUrl: "",
       form: {
-        pid: 0,
-        catename: "",
+        title: '',
         img: "",
         status: 1,
       },
@@ -76,36 +62,34 @@ export default {
   },
   computed: {
     ...mapGetters({
-      //   roleList: "role/roleList",
-      cateList: "cate/cateList",
+      bannerList: "banner/bannerList",
     }),
   },
   methods: {
     ...mapActions({
-      reqCateListAction: "cate/reqListAction",
+      reqBannerListAction: "banner/reqListAction",
     }),
     // 表单置空
     empty() {
       this.imageUrl = "";
       this.form = {
-        pid: 0,
-        catename: "",
+        title: '',
         img: "",
         status: 1,
       };
     },
     //添加验证
     addVerify() {
-      if (!this.form.catename) {
-          warningAlert("请输入商品分类名称！");
+      if (!this.form.title) {
+          warningAlert("请输入轮播图标题！");
           return false;
         }
-      if (this.form.pid !== 0 && !this.form.img) {
+        if (!this.form.img) {
           warningAlert("请上传图片！");
           return false;
-      }
-      if (!this.form.status) {
-          warningAlert("请选择商品分类状态！");
+        }
+        if (!this.form.status) {
+          warningAlert("请选轮播图状态！");
           return false;
         }
       return true;
@@ -113,14 +97,14 @@ export default {
     //确定添加
     sure() {
       if (this.addVerify()) {
-        cateAddReq(this.form).then((res) => {
+        bannerAddReq(this.form).then((res) => {
           if (res.data.code == 200) {
             successAlert(res.data.msg);
             //表单消失
             this.info.isShow = false;
             //表单置空
             this.empty();
-            this.reqCateListAction();
+            this.reqBannerListAction();
           } else {
             warningAlert(res.data.msg);
           }
@@ -139,7 +123,7 @@ export default {
     },
     //点击编辑，查看一条数据
     look(id) {
-      cateInfoReq(id).then((res) => {
+      bannerInfoReq(id).then((res) => {
         if (res.data.code == 200) {
           this.form = res.data.list;
           //补id，提交修改请求时需要
@@ -152,12 +136,12 @@ export default {
     },
     update() {
       if (this.addVerify()) {
-        cateEditReq(this.form).then((res) => {
+        bannerEditReq(this.form).then((res) => {
           if (res.data.code == 200) {
             successAlert(res.data.msg);
             this.empty();
             this.info.isShow = false;
-            this.reqCateListAction();
+            this.reqBannerListAction();
           } else {
             warningAlert(res.data.msg);
           }
@@ -171,10 +155,10 @@ export default {
       let file = f.raw;
 
       //图片大小不超过2M
-      if (file.size > 2 * 1024 * 1024) {
-        warningAlert("文件不能超过2M！");
-        return;
-      }
+    //   if (file.size > 2 * 1024 * 1024) {
+    //     warningAlert("文件不能超过2M！");
+    //     return;
+    //   }
 
       //规定文件只能是图片
       let imgExtArr = [".jpg", ".png", ".jpeg", ".gif"];
@@ -191,7 +175,7 @@ export default {
     },
   },
   mounted() {
-    this.reqCateListAction();
+    this.reqBannerListAction();
   },
 };
 </script>

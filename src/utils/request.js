@@ -378,3 +378,145 @@ export const goodsUpdateReq=(data)=>{
     })
 }
 
+//------------会员管理
+//获取会员列表
+export const memberListReq=()=>{
+    return axios({
+        url:baseUrl+"/api/memberlist",
+        method:"get",
+  
+    })
+}
+
+//修改管理员
+export const memberUpdateReq=(data)=>{
+    return axios({
+        url:baseUrl+"/api/memberedit",
+        method:'post',
+        data:qs.stringify(data)
+    })
+}
+
+//获取一条管理员数据
+export const memberInfoReq=(uid)=>{
+    return axios({
+        url:baseUrl+"/api/memberinfo",
+        method:"get",
+        params:{
+            uid
+        }
+    })
+}
+
+
+
+//---------轮播图管理
+//添加
+//有文件就不能用qs
+export const bannerAddReq=(data)=>{
+    let d = new FormData()
+    for(let i in data){
+        d.append(i,data[i])
+    }
+    return axios({
+        url:baseUrl+"/api/banneradd",
+        method:'post',
+        data:d,
+    })
+}
+
+//轮播图列表
+export const bannerListReq=()=>{
+    return axios({
+        url:baseUrl+"/api/bannerlist",
+        method:'get',
+    })
+}
+
+//获取一条轮播图信息
+export const bannerInfoReq=(id)=>{
+    return axios({
+        url:baseUrl+"/api/bannerinfo",
+        method:'get',
+        params:{
+            id
+        }
+    })
+}
+
+//轮播图修改
+export const bannerEditReq=(data)=>{
+    let d = new FormData()
+    for(let i in data){
+        d.append(i,data[i])
+    }
+    return axios({
+        url:baseUrl+"/api/banneredit",
+        method:"post",
+        data:d
+    })
+}
+
+//轮播图删除
+export const bannerDelReq=(id)=>{
+    return axios({
+        url:baseUrl+"/api/bannerdelete",
+        method:"post",
+        data:{
+            id
+        }
+    })
+}
+
+
+
+//---------秒杀活动管理
+//添加
+export const seckillAddReq=(data)=>{
+
+    return axios({
+        url:baseUrl+"/api/seckadd",
+        method:'post',
+        data:qs.stringify(data),
+    })
+}
+
+//秒杀活动列表
+export const seckillListReq=()=>{
+    return axios({
+        url:baseUrl+"/api/secklist",
+        method:'get',
+    })
+}
+
+//获取一条秒杀活动信息
+export const seckillInfoReq=(id)=>{
+    return axios({
+        url:baseUrl+"/api/seckinfo",
+        method:'get',
+        params:{
+            id
+        }
+    })
+}
+
+//秒杀活动修改
+export const seckillEditReq=(data)=>{
+    return axios({
+        url:baseUrl+"/api/seckedit",
+        method:"post",
+        data:qs.stringify(data)
+    })
+}
+
+//秒杀活动删除
+export const seckillDelReq=(id)=>{
+    return axios({
+        url:baseUrl+"/api/seckdelete",
+        method:"post",
+        data:{
+            id
+        }
+    })
+}
+

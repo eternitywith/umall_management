@@ -12,7 +12,7 @@
       </el-table-column>
       <el-table-column prop="specsname" label="规格名称" sortable width="180">
       </el-table-column>
-      <el-table-column label="规格属性" width="180">
+      <el-table-column label="规格属性">
         <template slot-scope="scope">
           <el-tag v-for="item in scope.row.attrs" :key="item">{{item}}</el-tag>
         </template>
@@ -25,7 +25,7 @@
           <el-button v-else type="info">禁用</el-button>
         </template>
       </el-table-column>
-      <el-table-column class="operation" label="操作">
+      <el-table-column class="operation" label="操作"  width="180">
         <template slot-scope="scope">
           <el-button class="btn" type="primary" @click="edit(scope.row.id)"
             >编辑</el-button

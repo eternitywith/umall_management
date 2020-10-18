@@ -85,7 +85,11 @@
         </el-form-item>
 
         <el-form-item label="商品属性">
-          <el-select v-model="form.specsattr" placeholder="请选择商品属性" multiple>
+          <el-select
+            v-model="form.specsattr"
+            placeholder="请选择商品属性"
+            multiple
+          >
             <el-option value=" " label="请选择" disabled></el-option>
             <el-option
               v-for="item in goodsAttrList"
@@ -116,9 +120,7 @@
         </el-form-item>
 
         <el-form-item v-if="info.isShow" label="商品描述">
-          <div id="editor">
-
-          </div>
+          <div id="editor"></div>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -132,9 +134,14 @@
   </div>
 </template>
 <script>
-import E from "wangeditor"
+import E from "wangeditor";
 import { mapActions, mapGetters } from "vuex";
-import { cateListReq,goodsAddReq, goodsInfoReq, goodsUpdateReq } from "../../../utils/request";
+import {
+  cateListReq,
+  goodsAddReq,
+  goodsInfoReq,
+  goodsUpdateReq,
+} from "../../../utils/request";
 import { warningAlert, successAlert } from "../../../utils/alert";
 export default {
   props: ["info"],
@@ -154,50 +161,49 @@ export default {
         ishot: 1,
         status: 1,
       },
-      imageUrl:'',
+      imageUrl: "",
       //二级分类的list
-      secondCateList:[],
+      secondCateList: [],
       //商品属性list
-      goodsAttrList:[],
+      goodsAttrList: [],
     };
   },
   computed: {
     ...mapGetters({
-      cateList:"cate/cateList",
-      specsList:"specs/specsList"
+      cateList: "cate/cateList",
+      specsList: "specs/specsList",
     }),
   },
   methods: {
     ...mapActions({
-      reqCateList:"cate/reqListAction",
-      reqSpecsList:"specs/reqListAction",
+      reqCateList: "cate/reqListAction",
+      reqSpecsList: "specs/reqListAction",
       reqListAction: "goods/reqListAction",
-      reqTotalAction:'goods/reqTotalAction'
+      reqTotalAction: "goods/reqTotalAction",
     }),
     //修改一级分类，获取二级分类
-    changeFirst(){
-      this.form.second_cateid='',
+    changeFirst() {
+      this.form.second_cateid = ""; 
       this.getSecondList();
     },
     //获得二级分类
-    getSecondList(){
-      cateListReq({pid:this.form.first_cateid}).then((res)=>{
+    getSecondList() {
+      cateListReq({ pid: this.form.first_cateid }).then((res) => {
         //二级分类
         this.secondCateList = res.data.list;
-      })
+      });
     },
 
     //修改商品规格
-    changeSpecs(){
+    changeSpecs() {
       //因为是多选框，所以这里赋值成一个数组
-      this.form.specsattr =[];
+      this.form.specsattr = [];
       this.getAttrList();
-  
     },
     //获取商品规格下的商品属性
-    getAttrList(){
+    getAttrList() {
       //在specsList中找到哪一条数据的id和当前this.form.specsid是一样的
-      let obj = this.specsList.find((item)=>item.id == this.form.specsid);
+      let obj = this.specsList.find((item) => item.id == this.form.specsid);
       this.goodsAttrList = obj.attrs;
     },
 
@@ -206,19 +212,19 @@ export default {
       // console.log(e)
       let file = e.raw;
 
-    //图片大小不超过2M
-    if(file.size > 2*1024*1024){
+      //图片大小不超过2M
+      if (file.size > 2 * 1024 * 1024) {
         warningAlert("文件不能超过2M！");
         return;
-    }
+      }
 
-    //规定文件只能是图片
-    let imgExtArr  = [".jpg",".png",".jpeg",".gif"];
-    let extname = file.name.slice(file.name.lastIndexOf("."))
-    if(!imgExtArr.some((item)=>item ==extname)){
+      //规定文件只能是图片
+      let imgExtArr = [".jpg", ".png", ".jpeg", ".gif"];
+      let extname = file.name.slice(file.name.lastIndexOf("."));
+      if (!imgExtArr.some((item) => item == extname)) {
         warningAlert("文件格式不正确！");
         return;
-    }
+      }
       //URL.createObjectURL()可以通过文件生成一个地址
       this.imageUrl = URL.createObjectURL(file);
       //将文件保存在form.img
@@ -240,11 +246,11 @@ export default {
         ishot: 1,
         status: 1,
       };
-      this.imageUrl='';
+      this.imageUrl = "";
       //二级分类的list
-      this.secondCateList=[];
+      this.secondCateList = [];
       //商品属性list
-      this.goodsAttrList=[];
+      this.goodsAttrList = [];
     },
     //如果是编辑打开的表单，则清除form，避免保留上次编辑的数据
     close() {
@@ -253,36 +259,100 @@ export default {
       }
     },
     //表单打开完成加载富文本编辑器
-    opened(){
+    opened() {
       //将editor放在本实例上
       this.editor = new E("#editor");
       this.editor.create();
       //编辑器创建完成后赋值
+      console.log(this.form.description);
       this.editor.txt.html(this.form.description);
     },
+    //添加验证
+    addVerify() {
+      if (!this.form.first_cateid) {
+        warningAlert("请选择一级分类！");
+        return false;
+      }
+      if (!this.form.second_cateid) {
+        warningAlert("请选择二级分类！");
+        return false;
+      }
+      if (!this.form.goodsname) {
+        warningAlert("请输入商品名称！");
+        return false;
+      }
+      if (!this.form.price) {
+        warningAlert("请输入商品价格！");
+        return false;
+      }
+      if (isNaN(this.form.price)) {
+        warningAlert("价格必须是数字类型！");
+        return false;
+      }
+      if (!this.form.market_price) {
+        warningAlert("请输入商品价格！");
+        return false;
+      }
+      if (isNaN(this.form.market_price)) {
+        warningAlert("价格必须是数字类型！");
+        return false;
+      }
+      if (!this.form.img) {
+        warningAlert("请上传图片！");
+        return false;
+      }
+      if (!this.form.description) {
+        warningAlert("请输入图片描述！");
+        return false;
+      }
+      if (!this.form.specsid) {
+        warningAlert("请选择商品规格！");
+        return false;
+      }
+      if (!this.form.specsattr) {
+        warningAlert("请选择规格属性！");
+        return false;
+      }
+      if (!this.form.isnew) {
+        warningAlert("请选择是否新品！");
+        return false;
+      }
+      if (!this.form.ishot) {
+        warningAlert("请选择是否热卖！");
+        return false;
+      }
+      if (!this.form.status) {
+        warningAlert("请选择商品状态！");
+        return false;
+      }
+      return true;
+    },
+
     //确定添加
     sure() {
       //将富文本编辑器的内容取出来给form.description
       this.form.description = this.editor.txt.html();
       // specsattr需要转成json格式
-      let data ={
-        ...this.form,
-        specsattr:JSON.stringify(this.form.specsattr)
+      if (this.addVerify()) {
+        let data = {
+          ...this.form,
+          specsattr: JSON.stringify(this.form.specsattr),
+        };
+        // console.log(data)
+        goodsAddReq(data).then((res) => {
+          if (res.data.code == 200) {
+            successAlert(res.data.msg);
+            //表单消失
+            this.info.isShow = false;
+            //表单置空
+            this.empty();
+            this.reqTotalAction();
+            this.reqListAction();
+          } else {
+            warningAlert(res.data.msg);
+          }
+        });
       }
-      // console.log(data)
-      goodsAddReq(data).then((res) => {
-        if (res.data.code == 200) {
-          successAlert(res.data.msg);
-          //表单消失
-          this.info.isShow = false;
-          //表单置空
-          this.empty();
-          this.reqTotalAction();
-          this.reqListAction();
-        } else {
-          warningAlert(res.data.msg);
-        }
-      });
     },
     // 取消添加
     cancel() {
@@ -292,6 +362,7 @@ export default {
     look(id) {
       goodsInfoReq(id).then((res) => {
         if (res.data.code == 200) {
+          this.info.isShow = true;
           this.form = res.data.list;
           //补id，提交修改请求时需要
           this.form.id = id;
@@ -299,12 +370,15 @@ export default {
           this.getSecondList();
           //图片
           this.imageUrl = this.$imgPre + this.form.img;
+          // console.log(this.form.specsattr);
           //商品属性从字符串转为[]
           this.form.specsattr = JSON.parse(this.form.specsattr);
           //获取商品属性的数组
           this.getAttrList();
-          //给富文本编辑器赋值，但是这个手编辑器还没有创建，等有了编辑器再创建，在opened函数中
-          
+          //给富文本编辑器赋值，但是这时候编辑器还没有创建，等有了编辑器再创建，在opened函数中
+          if (this.editor) {
+            this.editor.txt.html(this.form.description);
+          }
         } else {
           warningAlert(res.data.msg);
         }
@@ -313,25 +387,27 @@ export default {
     update() {
       //将富文本编辑器的内容取出来给form.description
       this.form.description = this.editor.txt.html();
-      // specsattr需要转成json格式
-      let data ={
-        ...this.form,
-        specsattr:JSON.stringify(this.form.specsattr)
+      if (this.addVerify()) {
+        // specsattr需要转成json格式
+        let data = {
+          ...this.form,
+          specsattr: JSON.stringify(this.form.specsattr),
+        };
+        console.log(data);
+        goodsUpdateReq(data).then((res) => {
+          if (res.data.code == 200) {
+            successAlert(res.data.msg);
+            //表单消失
+            this.info.isShow = false;
+            //表单置空
+            this.empty();
+
+            this.reqListAction();
+          } else {
+            warningAlert(res.data.msg);
+          }
+        });
       }
-      console.log(data)
-      goodsUpdateReq(data).then((res) => {
-        if (res.data.code == 200) {
-          successAlert(res.data.msg);
-          //表单消失
-          this.info.isShow = false;
-          //表单置空
-          this.empty();
-          
-          this.reqListAction();
-        } else {
-          warningAlert(res.data.msg);
-        }
-      });
     },
   },
   mounted() {
